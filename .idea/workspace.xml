@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="0ba850a6-024c-43da-af79-4ab37ec84470" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/inflation_rnd.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inflation_rnd.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/fun.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/fun.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

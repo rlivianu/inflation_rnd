@@ -36,3 +36,18 @@ def option_indices(swap_rate: float,
     floor_indices = [i for i in range(sum(floor_strikes < swap_rate))]
     cap_indices = [i for i in range(len(cap_strikes) - sum(cap_strikes > swap_rate), len(cap_strikes))]
     return floor_indices, cap_indices
+
+
+def points_convex(x: np.ndarray,
+                  y: np.ndarray) -> bool:
+    """Determines if the (x, y) coordinates given lie on the graph of a convex function"""
+    for i in range(1, len(x) - 1):
+        if signed_triangle_area(x[i-1:i+2], y[i-1:i+2]) > 0:
+            return False
+    return True
+
+
+def signed_triangle_area(x: np.ndarray,
+                         y: np.ndarray) -> float:
+    """Return the signed area of a triangle determined by vertices x and y (both length 3)"""
+    return x[0] * (y[2] - y[1]) + x[1] * (y[0] - y[2]) + x[2] * (y[1] - y[0])
