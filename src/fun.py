@@ -51,3 +51,19 @@ def signed_triangle_area(x: np.ndarray,
                          y: np.ndarray) -> float:
     """Return the signed area of a triangle determined by vertices x and y (both length 3)"""
     return x[0] * (y[2] - y[1]) + x[1] * (y[0] - y[2]) + x[2] * (y[1] - y[0])
+
+
+def clean_caps(cap_strikes: np.ndarray,
+               cap_prices: np.ndarray) -> (np.ndarray, np.ndarray):
+    """Removes missing and non-convex data from cap prices"""
+    new_strikes = cap_strikes[cap_prices == cap_prices]
+    new_caps = cap_prices[cap_prices == cap_prices]
+
+    if points_convex(new_strikes, new_caps):
+        return new_strikes, new_caps
+    else:
+        indices_to_remove = []
+        for i in range(1, len(new_strikes) - 1):
+            if signed_triangle_area(new_strikes[i - 1:i + 2], new_caps[i - 1:i + 2]) > 0:
+                indices_to_remove.append(i)
+        return np.delete(new_strikes, indices_to_remove), np.delete(new_caps, indices_to_remove)
