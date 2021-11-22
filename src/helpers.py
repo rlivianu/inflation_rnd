@@ -40,6 +40,11 @@ def option_indices(swap_rate: float,
     return floor_indices, cap_indices
 
 
+def df_option_indices(swap_rate, floor_strikes, cap_strikes):
+    fi, ci = option_indices(swap_rate, floor_strikes, cap_strikes)
+    return np.concatenate([2 + np.array(fi), 2 + len(floor_strikes) + np.array(ci)]).tolist()
+
+
 def points_convex(x: np.ndarray,
                   y: np.ndarray) -> bool:
     """Determines if the (x, y) coordinates given lie on the graph of a convex function"""
