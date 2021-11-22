@@ -71,7 +71,11 @@ def clean_caps(cap_strikes: np.ndarray,
         return np.delete(new_strikes, indices_to_remove), np.delete(new_caps, indices_to_remove)
 
 
-def bs_call(spot, strike, expiry, r, sigma):
+def bs_call(spot: np.ndarray,
+            strike: np.ndarray,
+            expiry: np.ndarray,
+            r: np.ndarray,
+            sigma: np.ndarray) -> np.ndarray:
     """ Computes the true value of a European call option under Black-Scholes assumptions
     :param spot: float
         The spot price of the asset
@@ -91,7 +95,11 @@ def bs_call(spot, strike, expiry, r, sigma):
     return spot * norm.cdf(d1) - strike * np.exp(-r * expiry) * norm.cdf(d2)
 
 
-def implied_volatility(cap_strikes, cap_prices, bond_price, swap_rate, maturity):
+def implied_volatility(cap_strikes: np.ndarray,
+                       cap_prices: np.ndarray,
+                       bond_price: float,
+                       swap_rate: float,
+                       maturity: float) -> np.ndarray:
     """Computes implied Black-Scholes volatility from inflation caps and floors"""
 
     def objective(sigma, value, spot, strike, expiry, r):
@@ -101,7 +109,6 @@ def implied_volatility(cap_strikes, cap_prices, bond_price, swap_rate, maturity)
     spot = (1 + swap_rate) ** maturity
     strikes = (1 + cap_strikes) ** maturity
     x0 = np.ones(len(values)) * 0.1
-    mats = np.ones(len(values)) * maturity
 
-    out = optimize.newton(objective, x0=x0, args=(values, spot, strikes, 10, 0))
+    out = optimize.newton(objective, x0=x0, args=(values, spot, strikes, maturity, 0))
     return out
