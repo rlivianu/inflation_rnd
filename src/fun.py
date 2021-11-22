@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 from datetime import date
+from scipy.stats import norm
+from scipy import optimize
 
 
 def split_strikes(strikes: np.ndarray) -> (np.ndarray, np.ndarray):
