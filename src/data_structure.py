@@ -120,3 +120,20 @@ class InflationData:
         ddy = eval_spline(x, spline, 2)
         sr = self.swil.iloc[day, year - 1] / 100
         return rnd_from_tiv(x, y, dy, ddy, year, sr)
+
+    def rnd_rate(self,
+                 x: np.ndarray,
+                 day: int,
+                 year: int) -> np.ndarray:
+        """Computes the value of the RND of the inflation rate at given strikes for a date/maturity combination"""
+        assert self.splines
+
+        if np.isscalar(x):
+            x = np.array([x])
+        spline = self.splines[year - 1].iloc[day]
+        y = eval_spline(x, spline)
+        dy = eval_spline(x, spline, 1)
+        ddy = eval_spline(x, spline, 2)
+        sr = self.swil.iloc[day, year - 1] / 100
+        rnd = rnd_from_tiv(x, y, dy, ddy, year, sr)
+        return rnd * year * (x ** ((year - 1.0) / year))
