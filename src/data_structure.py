@@ -1,8 +1,10 @@
 from helpers import *
+import pandas as pd
+from datetime import date
 
 
 class InflationData:
-    '''Loads ands stores inflation market data needed for RND estimation'''
+    """Loads ands stores inflation market data needed for RND estimation"""
 
     def __init__(self, option_fnames: list,
                  swil_fname: str,
@@ -46,10 +48,12 @@ class InflationData:
 
         self.combined_caps = []
         self.implied_vols = []
+        self.timplied_vols = []
 
     def compute_implied_vol(self):
         self.combined_caps = []
         self.implied_vols = []
+        self.timplied_vols = []
 
         # Compute the implied caps from floors
         implied_caps = []
@@ -83,6 +87,18 @@ class InflationData:
             out = aux_df.apply(tf, 1)
             out.columns = self.combined_caps[i].columns
             self.implied_vols.append(out)
+            tivs = out.apply(lambda x: np.exp(x ** 2))
+            tivs.columns = self.combined_caps[i].columns
+            self.timplied_vols.append(tivs)
         print('Implied volatility computed')
+
+        return None
+
+    def fit_splines(self):
+        self.splines = []
+        aux_df = pd.concat([self.combined_caps[9], self.timplied_vols[9]], axis=1)
+        n = aux_df.shape[1] / 2
+        tf = lambda x: clean_fit_spline(x.index.to_numpy()[:n], x.iloc[:n].to_numpy(), x.iloc[n:].to_numpy())
+        self.splines.append(aux_df.apply(tf, 1))
 
         return None
