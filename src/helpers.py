@@ -41,7 +41,7 @@ def option_indices(swap_rate: float,
 
 def df_option_indices(swap_rate: float,
                       floor_strikes: np.ndarray,
-                      cap_strikes: np.ndarary) -> list:
+                      cap_strikes: np.ndarray) -> list:
     fi, ci = option_indices(swap_rate, floor_strikes, cap_strikes)
     return np.concatenate([2 + np.array(fi), 2 + len(floor_strikes) + np.array(ci)]).tolist()
 
@@ -126,12 +126,10 @@ def clean_fit_spline(strikes: np.ndarray,
     """Fits a smooting spline after cleaning the data for arbitrages"""
 
     # Remove nans
-    non_nan_inds = np.argwhere(~np.isnan(caps)).squeeze(-1)
+    non_nan_inds = np.argwhere(~np.isnan(ivs)).squeeze(-1)
     new_strikes = strikes[non_nan_inds]
     new_caps = caps[non_nan_inds]
     new_ivs = ivs[non_nan_inds]
-
-    print(new_caps)
 
     # Remove obviously wrong prices
     inds_to_keep = np.arange(0, len(new_caps), 1)
@@ -141,12 +139,15 @@ def clean_fit_spline(strikes: np.ndarray,
     new_ivs = new_ivs[inds_to_keep]
 
     # Fit spline
-    r_y = robjects.FloatVector(new_ivs)
-    r_x = robjects.FloatVector(new_strikes)
+    if len(new_caps) > 4:
+        r_y = robjects.FloatVector(new_ivs)
+        r_x = robjects.FloatVector(new_strikes)
 
-    r_smooth_spline = robjects.r['smooth.spline']
-    spline = r_smooth_spline(x=r_x, y=r_y)
-    return spline
+        r_smooth_spline = robjects.r['smooth.spline']
+        spline = r_smooth_spline(x=r_x, y=r_y)
+        return spline
+    else:
+        return None
 
 
 def remove_arb(cap_prices: np.ndarray) -> np.ndarray:

@@ -1,4 +1,4 @@
-from helpers import *
+from .helpers import *
 import pandas as pd
 from datetime import date
 
@@ -96,9 +96,27 @@ class InflationData:
 
     def fit_splines(self):
         self.splines = []
-        aux_df = pd.concat([self.combined_caps[9], self.timplied_vols[9]], axis=1)
-        n = aux_df.shape[1] / 2
-        tf = lambda x: clean_fit_spline(x.index.to_numpy()[:n], x.iloc[:n].to_numpy(), x.iloc[n:].to_numpy())
-        self.splines.append(aux_df.apply(tf, 1))
-
+        for i in range(len(self.combined_caps)):
+            print(i)
+            aux_df = pd.concat([self.combined_caps[i], self.timplied_vols[i]], axis=1)
+            n = self.combined_caps[i].shape[1]
+            tf = lambda x: clean_fit_spline((1 + x.index.to_numpy()[:n]) ** (i + 1), x.iloc[:n].to_numpy(),
+                                            x.iloc[n:].to_numpy())
+            self.splines.append(aux_df.apply(tf, 1))
         return None
+
+    def rnd(self,
+            x: np.ndarray,
+            day: int,
+            year: int) -> np.ndarray:
+        """Computes the value of the RND at given strikes for a date/maturity combination"""
+        assert self.splines
+
+        if np.isscalar(x):
+            x = np.array([x])
+        spline = self.splines[year - 1].iloc[day]
+        y = eval_spline(x, spline)
+        dy = eval_spline(x, spline, 1)
+        ddy = eval_spline(x, spline, 2)
+        sr = self.swil.iloc[day, year - 1] / 100
+        return rnd_from_tiv(x, y, dy, ddy, year, sr)
