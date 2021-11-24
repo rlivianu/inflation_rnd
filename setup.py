@@ -3,7 +3,7 @@ from src.version import __version__
 
 setup(
     name='inflation_rnd',
-    url='https://github.com/Piers14/inflation_rnd',
+    url='https://github.com/piers-hinds/inflation_rnd',
     author='Piers Hinds',
     author_email='pmxph7@nottingham.ac.uk',
     packages=['inflation_rnd'],
