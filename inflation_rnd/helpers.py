@@ -144,7 +144,7 @@ def clean_fit_spline(strikes: np.ndarray,
         r_x = robjects.FloatVector(new_strikes)
 
         r_smooth_spline = robjects.r['smooth.spline']
-        spline = r_smooth_spline(x=r_x, y=r_y)
+        spline = r_smooth_spline(x=r_x, y=r_y, spar=robjects.FloatVector([0.5]))
         return spline
     else:
         return None
