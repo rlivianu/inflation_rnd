@@ -130,6 +130,7 @@ class InflationData:
 
         if np.isscalar(x):
             x = np.array([x])
+        x = (1 + x) ** year
         spline = self.splines[year - 1].iloc[day]
         y = eval_spline(x, spline)
         dy = eval_spline(x, spline, 1)
