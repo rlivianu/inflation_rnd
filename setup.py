@@ -1,5 +1,5 @@
 from setuptools import setup
-from src.version import __version__
+from inflation_rnd.version import __version__
 
 setup(
     name='inflation_rnd',

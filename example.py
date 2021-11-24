@@ -1,4 +1,4 @@
-from src import *
+from inflation_rnd import *
 
 path = 'C:\\Users\\pmxph7\\OneDrive - The University of Nottingham\\PhD\\inflation\\us_data'
 fs = [path + '\\' + str(i) + 'Y.csv' for i in range(1, 11)]
