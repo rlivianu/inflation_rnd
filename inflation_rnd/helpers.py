@@ -184,4 +184,29 @@ def rnd_from_tiv(strikes: np.ndarray,
     x3 = (strikes * norm.pdf(d2) * np.sqrt(maturity) * (d1 * d2 - 2 * np.log(tiv) - 1) * dtiv * dtiv) / (
                 4 * tiv * tiv * (np.log(tiv)) ** 1.5)
     x4 = (strikes * norm.pdf(d2) * np.sqrt(maturity) * ddtiv) / (2 * tiv * v)
-    return (x1 + x2 + x3 + x4)
+    return x1 + x2 + x3 + x4
+
+
+def compute_probs(rnd: callable,
+                  values: np.ndarray) -> np.ndarray:
+    """Computes probabilites given a RND"""
+    probs = np.zeros(len(values) - 1)
+    for i in range(len(values) - 1):
+        probs[i] = quad(rnd, values[i], values[i + 1], epsabs=1e-5)[0]
+    return probs
+
+
+def compute_moments(rnd: callable,
+                    interval: tuple) -> np.ndarray:
+    """Computes moments given a RND"""
+    a, b = interval
+
+    mn = quad(lambda x: x * rnd(x), a, b, epsabs=1e-5)[0]
+    vr_prime = quad(lambda x: x * x * rnd(x), a, b, epsabs=1e-5)[0]
+    sk_prime = quad(lambda x: x * x * x * rnd(x), a, b, epsabs=1e-5)[0]
+    kt_prime = quad(lambda x: x * x * x * x * rnd(x), a, b, epsabs=1e-5)[0]
+    vr = vr_prime - mn ** 2
+    sk = (sk_prime - 3 * vr * mn - mn ** 3) / vr ** 1.5
+    kt = (kt_prime - 4 * sk_prime * mn + 6 * vr_prime * mn ** 2 - 3 * mn ** 4) / vr ** 2
+
+    return np.array([mn, vr, sk, kt])
